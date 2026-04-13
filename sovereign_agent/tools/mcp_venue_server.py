@@ -41,7 +41,7 @@ VENUES = {
     "The Haymarket Vaults": {
         "capacity": 160,
         "vegan": True,
-        "status": "available",
+        "status": "full",
         "address": "1 Dalry Road, Edinburgh",
     },
     "The Guilford Arms": {

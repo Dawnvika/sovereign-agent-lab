@@ -11,10 +11,10 @@ Run `python grade.py ex2` to check for obvious issues.
 # Look at [TOOL_CALL] lines in your terminal output.
 # Example: ["check_pub_availability", "get_edinburgh_weather"]
 
-TASK_A_TOOLS_CALLED = ["check_pub_availability", 
-    "calculate_catering_cost", 
-    "get_edinburgh_weather", 
-    "generate_event_flyer"]
+TASK_A_TOOLS_CALLED = [ 'check_pub_availability',
+                       'calculate_catering_cost',
+                       'get_edinburgh_weather',
+                       'generate_event_flyer']
 
 # Which venue did the agent confirm? Must be one of:
 # "The Albanach", "The Haymarket Vaults", or "none"
@@ -66,7 +66,7 @@ TASK_B_PROMPT_USED = "Professional event flyer for a tech event. Warm lighting, 
 # Why did the agent's behaviour NOT change when Nebius removed FLUX?
 # One sentence. This is the point of the lesson.
 TASK_B_WHY_AGENT_SURVIVED = """
-FILL ME IN
+The agent survived because the tool catches the API error and still returns a "success" message with a placeholder image, allowing the agent's main loop to continue working without crashing.
 """
 
 # ── Task C ─────────────────────────────────────────────────────────────────
@@ -138,14 +138,10 @@ Conversely, the Rasa CALM `flows.yml` file uses explicit, deterministic routing.
 # Must reference a specific behaviour from your run.
 
 MOST_SURPRISING = """
-<<<<<<< HEAD
 The most unexpected thing was the severe visual hallucination on the generated flyer. 
 Even though the agent correctly passed the exact prompt, the image model completely mangled the text out of the box, 
 producing bizarre words like "meettup" and "160 girts guests". 
 Additionally, it was surprising that when the agent checked multiple valid pubs (like The Albanach and The Haymarket Vaults), 
 it picked one seemingly at random without explaining the logic behind its final choice.
+
 """
-=======
-FILL ME IN
-"""
->>>>>>> upstream/main

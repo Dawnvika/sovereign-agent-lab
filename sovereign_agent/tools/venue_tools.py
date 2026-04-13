@@ -228,9 +228,11 @@ def calculate_catering_cost(guests: int, price_per_head_gbp: float) -> str:
 
 def _build_flyer_prompt(venue_name: str, guest_count: int, event_theme: str) -> str:
     return (
-        f"Professional event flyer for {event_theme} at {venue_name}, "
-        f"Edinburgh. {guest_count} guests tonight. Warm lighting, "
-        f"Scottish architecture background, clean modern typography."
+        f'Professional event flyer for a tech event. '
+        f'Warm lighting, Scottish architecture background. '
+        f'Feature prominent, perfectly spelled text reading exactly: "{event_theme}". '
+        f'Below it, add smaller clear text reading: "{venue_name} - {guest_count} guests". '
+        f'Use clean modern typography. Do not add random unreadable letters.'
     )
 
 
@@ -262,9 +264,8 @@ def _attempt_real_image_generation(prompt: str) -> str | None:
     except Exception:
         return None
 
-
 @tool
-def generate_event_flyer(pub_name: str, guest_count: int, event_theme: str) -> str:
+def generate_event_flyer(venue_name: str, guest_count: int, event_theme: str) -> str:
     """
     Generate a promotional event flyer image for the confirmed Edinburgh venue.
     Call this AFTER a venue is confirmed, as the final output step.
@@ -273,42 +274,6 @@ def generate_event_flyer(pub_name: str, guest_count: int, event_theme: str) -> s
     guest_count: confirmed number of attendees
     event_theme: short description, e.g. 'AI Meetup, professional, Scottish'
     """
-<<<<<<< HEAD
-    
-    prompt = (
-        f'Professional event flyer for a tech event. '
-        f'Warm lighting, Scottish architecture background. '
-        f'Feature prominent, perfectly spelled text reading exactly: "{event_theme}". '
-        f'Below it, add smaller clear text reading: "{pub_name} - {guest_count} guests". '
-        f'Use clean modern typography. Do not add random unreadable letters.'
-    )
-
-    try:
-        client = OpenAI(
-            base_url="https://api.tokenfactory.nebius.com/v1/",
-            api_key=os.getenv("NEBIUS_KEY"),
-        )
-        
-        response = client.images.generate(
-            model="black-forest-labs/flux-schnell",
-            prompt=prompt,
-            n=1,
-        )
-        url = response.data[0].url
-        
-        return json.dumps({
-            "success": True,
-            "prompt_used": prompt,
-            "image_url": url,
-        })
-    except Exception as e:
-        return json.dumps({
-            "success": False,
-            "error": str(e),
-            "prompt_used": prompt,
-            "image_url": "",
-        })
-=======
     prompt = _build_flyer_prompt(venue_name, guest_count, event_theme)
 
     # Path 1: real image generation (if a provider is configured)
@@ -325,8 +290,6 @@ def generate_event_flyer(pub_name: str, guest_count: int, event_theme: str) -> s
         )
 
     # Path 2: deterministic placeholder (graceful fallback)
-    # A deterministic hash of the prompt keeps the placeholder URL stable
-    # for a given (venue, guests, theme) — useful when diffing agent runs.
     digest = hashlib.sha1(prompt.encode("utf-8")).hexdigest()[:12]
     placeholder_url = (
         f"https://placehold.co/1200x628/1a1a2e/eaeaea"
@@ -345,4 +308,3 @@ def generate_event_flyer(pub_name: str, guest_count: int, event_theme: str) -> s
             ),
         }
     )
->>>>>>> upstream/main

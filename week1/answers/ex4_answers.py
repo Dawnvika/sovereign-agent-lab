@@ -7,30 +7,43 @@ Fill this in after running exercise4_mcp_client.py.
 # ── Basic results ──────────────────────────────────────────────────────────
 
 # Tool names as shown in "Discovered N tools" output.
-TOOLS_DISCOVERED = []
+TOOLS_DISCOVERED = ["search_venues", 
+    "get_venue_details"]
 
-QUERY_1_VENUE_NAME    = "FILL_ME_IN"
-QUERY_1_VENUE_ADDRESS = "FILL_ME_IN"
-QUERY_2_FINAL_ANSWER  = "FILL_ME_IN"
+QUERY_1_VENUE_NAME    = "The Haymarket Vaults"
+QUERY_1_VENUE_ADDRESS = "1 Dalry Road, Edinburgh"
+QUERY_2_FINAL_ANSWER  = "It seems there are no currently available Edinburgh venues that can accommodate 300 people with vegan options. Would you like me to:\n1. Search for venues with a lower minimum capacity?\n2. Look for venues without vegan requirements?\n3. Check for availability at a specific date/time?\n\nLet me know how you'd like to proceed."
 
 # ── The experiment ─────────────────────────────────────────────────────────
 # Required: modify venue_server.py, rerun, revert.
 
-EX4_EXPERIMENT_DONE = None   # True or False
+EX4_EXPERIMENT_DONE = True   # True or False
 
 # What changed, and which files did or didn't need updating? Min 30 words.
+# What changed in the output? What didn't?
+# Min 30 words.
 EX4_EXPERIMENT_RESULT = """
-FILL ME IN
+When I updated the venue status in `mcp_venue_server.py`, the agent's output changed to recommend the only remaining available venue. 
+Because there was only one match left, the agent's internal reasoning also changed: 
+it no longer had to compare options to decide which was the 'best' fit.
+However, I did not need to update the agent's actual code file (`exercise4_mcp_client.py`) at all. 
+The agent dynamically read the new live data from the shared MCP server, 
+proving that we can manage data independently from the agent's logic.
+For Query 2 the agent correctly identified that there are 0 matching venues, informed the user, 
+and gracefully offered 3 alternatives to adjust the search (like reducing capacity or changing dietary needs).
 """
-
 # ── MCP vs hardcoded ───────────────────────────────────────────────────────
 
-LINES_OF_TOOL_CODE_EX2 = 0   # count in exercise2_langgraph.py
+LINES_OF_TOOL_CODE_EX2 = 4   # count in exercise2_langgraph.py
 LINES_OF_TOOL_CODE_EX4 = 0   # count in exercise4_mcp_client.py
 
 # What does MCP buy you beyond "the tools are in a separate file"? Min 30 words.
 MCP_VALUE_PROPOSITION = """
-FILL ME IN
+MCP provides a universal, standardized bridge between agents and tools. 
+It allows entirely different agent frameworks (like LangGraph and Rasa) to connect 
+to the exact same live server and dynamically discover its capabilities. 
+If we add a new tool or fix a bug on the server, 
+all connected agents instantly inherit the new logic without requiring any code changes or redeployments on the agent side.
 """
 
 # ── PyNanoClaw architecture — SPECULATION QUESTION ─────────────────────────
@@ -70,11 +83,11 @@ FILL ME IN
 #     ambiguous task.
 
 WEEK_5_ARCHITECTURE = """
-- FILL ME IN
-- FILL ME IN
-- FILL ME IN
-- FILL ME IN
-- FILL ME IN
+- The Planner: A thinking model that sits upstream of the ReAct loop to break down ambiguous tasks into subgoals. It lives in the autonomous-loop half.
+- The Executor: Evolved from our Week 1 LangGraph agent, it dynamically acts on the subgoals using tools like web search. It lives inside the autonomous-loop half.
+- The Shared MCP Tool Server: A centralized server providing all capabilities (venue lookups, calendar, etc.) to any connected agent. It lives in the shared layer between both halves.
+- The Handoff Bridge: A protocol that delegates tasks back and forth, transferring control when the autonomous loop needs a human conversation. It lives in the shared layer connecting the two halves.
+- The Structured Confirmation Agent: Evolved from our Week 1 Rasa CALM agent, it runs strict, auditable business rules (and a RAG knowledge base) for high-stakes tasks like calling the pub manager. It lives in the structured-agent half.
 """
 
 # ── The guiding question ───────────────────────────────────────────────────
@@ -82,5 +95,14 @@ WEEK_5_ARCHITECTURE = """
 # Must reference specific things you observed in your runs. Min 60 words.
 
 GUIDING_QUESTION_ANSWER = """
-FILL ME IN
+For the research phase, we can use the LangGraph agent. 
+It is a creative problem-solver that can dynamically recover from errors (like the Pydantic schema validation we saw) 
+and suggest alternatives when a venue is full. 
+
+For the confirmation call, we must use the Rasa CALM agent because it strictly follows rules. 
+Swapping them would be a disaster. 
+If LangGraph handled the call, it might hallucinate details 
+(like when it invented "160 girts" on the flyer or lost the conversation context after I asked about parking). 
+If Rasa handled the research, its rigid tracks would crash as soon as a search returned 0 matches, 
+because it lacks the free-thinking ability to suggest alternatives.
 """
